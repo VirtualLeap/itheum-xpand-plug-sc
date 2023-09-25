@@ -1,0 +1,24 @@
+{
+  "devnet": {
+    "api": "https://devnet-api.multiversx.com",
+    "proxy": "https://devnet-gateway.multiversx.com",
+    "chain-id": "D",
+    "itheum-tokenid": "ITHEUM-df6f26",
+    "trailblazer-nftid": "DATANFTFT-e936d4-01",
+    "deploy-transaction": "25b77297bea546fccc7bb55c15ab11e6bb80d59dfba1397364aa58ed54a03bf5",
+    "contract-address": "erd1qqqqqqqqqqqqqpgqlyvxqjqdlqcxqau5hfw6tg3zc6sah8ny7tks7vgscp"
+  },
+  "testnet": {
+    "api": "https://testnet-api.multiversx.com",
+    "proxy": "https://testnet-gateway.multiversx.com",
+    "chain-id": "T"
+  },
+  "mainnet": {
+    "api": "https://api.multiversx.com",
+    "proxy": "https://gateway.multiversx.com",
+    "chain-id": "1",
+    "itheum-tokenid": "ITHEUM-df6f26",
+    "trailblazer-nftid": "DATANFTFT-e936d4-01",
+    "contract-address": "erd1qqqqqqqqqqqqqpgqlyvxqjqdlqcxqau5hfw6tg3zc6sah8ny7tks7vgscp"
+  }
+}
