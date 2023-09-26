@@ -101,9 +101,6 @@ const main = async () => {
     const chunk = batches[i]
     console.log(`Registering members batch ${i + 1} of ${batches.length} ...`)
     await registerSnapshotInContract(proxyProvider, account, signer, scAddress, chunk)
-
-    account.incrementNonce()
-
     await timeout(500)
   }
 
@@ -162,7 +159,7 @@ const registerSnapshotInContract = async (
     chainID: networkConfig.ChainID,
   })
 
-  tx.setNonce(account.nonce)
+  tx.setNonce(account.getNonceThenIncrement())
   const signature = await signer.sign(tx.serializeForSigning())
   tx.applySignature(signature)
 
