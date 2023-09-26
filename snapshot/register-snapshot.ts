@@ -86,7 +86,7 @@ const main = async () => {
     await timeout(500)
   }
 
-  console.log(`${members.length} have been included in Trailblazer SFT snapshot`)
+  console.log(`${members.length} have been included in the snapshot.`)
 
   console.log('Registering snapshot batches in smart contract ...')
 
@@ -100,7 +100,6 @@ const main = async () => {
   for (let i = 0; i < batches.length; i++) {
     const chunk = batches[i]
     console.log(`Registering members batch ${i + 1} of ${batches.length} ...`)
-    console.log('nonce', account.nonce)
     await registerSnapshotInContract(proxyProvider, account, signer, scAddress, chunk)
 
     account.incrementNonce()
