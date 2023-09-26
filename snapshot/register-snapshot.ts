@@ -148,7 +148,7 @@ const registerSnapshotInContract = async (
     }, new ContractCallPayloadBuilder().setFunction(new ContractFunction('registerMembersSnapshotBatch')))
     .build()
 
-  const computedGasLimit = 50_000_000 + (networkConfig.GasPerDataByte + 10_000) * payload.length()
+  const computedGasLimit = 50_000_000 + (networkConfig.GasPerDataByte + 20_000) * payload.length()
 
   const tx = new Transaction({
     data: payload,
