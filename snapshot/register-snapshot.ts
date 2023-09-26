@@ -50,13 +50,16 @@ const main = async () => {
     }
 
     paginatedCandidates
-      .map((candidate) => ({
-        address: candidate.address,
-        weight: candidate.balance,
-      }))
+      .filter((c) => new BigNumber(c.balance).shiftedBy(-itheumTokenDefinition.decimals).gte(itheumMinHoldAmount))
+      .map(
+        (candidate) =>
+          ({
+            address: candidate.address,
+            weight: 1,
+          } as SnapshotMember)
+      )
       .forEach((member) => {
-        const satisfiesMinHoldAmount = new BigNumber(member.weight).shiftedBy(-itheumTokenDefinition.decimals).gte(itheumMinHoldAmount)
-        if (!seenAddresses.has(member.address) && satisfiesMinHoldAmount) {
+        if (!seenAddresses.has(member.address)) {
           seenAddresses.add(member.address)
           members.push(member)
         }
@@ -77,10 +80,13 @@ const main = async () => {
     }
 
     paginatedCandidates
-      .map((candidate) => ({
-        address: candidate.address,
-        weight: candidate.balance,
-      }))
+      .map(
+        (candidate) =>
+          ({
+            address: candidate.address,
+            weight: 1,
+          } as SnapshotMember)
+      )
       .forEach((member) => {
         if (!seenAddresses.has(member.address)) {
           seenAddresses.add(member.address)
@@ -95,7 +101,7 @@ const main = async () => {
 
   console.log('Registering snapshot batches in smart contract ...')
 
-  const batches = chunkArray(members, 500)
+  const batches = chunkArray(members, 250)
 
   const signer = await getAdminSigner()
   const account = new Account(signer.getAddress())
@@ -112,7 +118,7 @@ const main = async () => {
   console.log(`Done! Snapshot of total ${members.length} members registered!`)
 }
 
-export const loadMxpyConfig = async () => {
+const loadMxpyConfig = async () => {
   const storagePath = path.join(__dirname, '..', 'mxpy.data-storage.json')
   const storageContents = readFileSync(storagePath, { encoding: 'utf8' })
   return JSON.parse(storageContents)
