@@ -1,5 +1,6 @@
 import path from 'path'
 import fs, { readFileSync } from 'fs'
+import { BigNumber } from 'bignumber.js'
 import { UserSigner } from '@multiversx/sdk-wallet'
 import { chunkArray, getArg, timeout } from './shared/helpers'
 import { SnapshotCandidate, SnapshotMember } from './shared/types'
@@ -22,6 +23,7 @@ const main = async () => {
   const apiUrl = mxpyConfig[env]['api']
   const proxyUrl = mxpyConfig[env]['proxy']
   const itheumTokenId = mxpyConfig[env]['itheum-tokenid']
+  const itheumMinHoldAmount = +mxpyConfig[env]['itheum-min-hold-amount']
   const trailblazerNftId = mxpyConfig[env]['trailblazer-nftid']
   const scAddress = mxpyConfig[env]['contract-address']
 
@@ -32,11 +34,12 @@ const main = async () => {
 
   const apiProvider = new ApiNetworkProvider(apiUrl, { timeout: 30000 })
   const proxyProvider = new ProxyNetworkProvider(proxyUrl, { timeout: 30000 })
+  const itheumTokenDefinition = await apiProvider.getDefinitionOfFungibleToken(itheumTokenId)
 
   let members: SnapshotMember[] = []
   let seenAddresses = new Set<string>()
 
-  console.log('Scanning ITHEUM token holders ...')
+  console.log(`Scanning ITHEUM token holders with minimum ${itheumMinHoldAmount} $ITHEUM ...`)
 
   for (let page = 1; page <= 10; page++) {
     const paginatedCandidates = await getPaginatedTokenAccounts(apiProvider, itheumTokenId, page)
@@ -51,7 +54,8 @@ const main = async () => {
         weight: candidate.balance,
       }))
       .forEach((member) => {
-        if (!seenAddresses.has(member.address)) {
+        const satisfiesMinHoldAmount = new BigNumber(member.weight).shiftedBy(-itheumTokenDefinition.decimals).gte(itheumMinHoldAmount)
+        if (!seenAddresses.has(member.address) && satisfiesMinHoldAmount) {
           seenAddresses.add(member.address)
           members.push(member)
         }
