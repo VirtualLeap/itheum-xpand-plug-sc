@@ -16,6 +16,7 @@ import {
 } from '@multiversx/sdk-core'
 
 const AdminPem = 'admin.pem'
+const MaxBlockGasLimit = 600_000_000
 
 const main = async () => {
   const env = getArg(0)
@@ -94,7 +95,7 @@ const main = async () => {
 
   console.log('Registering snapshot batches in smart contract ...')
 
-  const batches = chunkArray(members, 200)
+  const batches = chunkArray(members, 500)
 
   const signer = await getAdminSigner()
   const account = new Account(signer.getAddress())
@@ -152,7 +153,7 @@ const registerSnapshotInContract = async (
     }, new ContractCallPayloadBuilder().setFunction(new ContractFunction('registerMembersSnapshotBatch')))
     .build()
 
-  const computedGasLimit = 50_000_000 + (networkConfig.GasPerDataByte + 20_000) * payload.length()
+  const computedGasLimit = Math.min(MaxBlockGasLimit, 20_000_000 + (networkConfig.GasPerDataByte + 20_000) * payload.length())
 
   const tx = new Transaction({
     data: payload,
